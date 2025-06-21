@@ -1,3 +1,4 @@
+// Starfield Effect
 const starsContainer = document.getElementById('stars');
 for (let i = 0; i < 100; i++) {
   const star = document.createElement('div');
@@ -8,9 +9,9 @@ for (let i = 0; i < 100; i++) {
   starsContainer.appendChild(star);
 }
 
+// Auto-Saving Diary
 const diary = document.getElementById('diary');
 
-// Replace default content with saved one (only if saved exists)
 window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem('diaryEntry');
   if (saved && diary) {
@@ -18,7 +19,6 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Auto-save on typing
 if (diary) {
   diary.addEventListener('input', () => {
     localStorage.setItem('diaryEntry', diary.innerHTML);
