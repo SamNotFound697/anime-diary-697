@@ -86,33 +86,34 @@
       max-height: 250px;
       overflow-y: auto;
       font-family: 'JetBrains Mono', monospace;
+      text-align: left;
+      line-height: 1.6;
+      white-space: pre-wrap;
     }
 
-<style>
-  /* ... existing CSS ... */
+    p.vault-link {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
 
-  footer {
-    text-align: center;
-    font-size: 0.9rem;
-    color: #888;
-    margin-top: 4rem;
-    padding-bottom: 2rem;
-    line-height: 1.6;
-    white-space: normal;
-  }
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #888;
+      margin-top: 4rem;
+      padding-bottom: 2rem;
+      line-height: 1.6;
+      white-space: normal;
+    }
 
-  /* ✨ Bonus glow effect */
-  footer p {
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
-  }
+    footer p {
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+    }
 
-  footer p:hover {
-    opacity: 1;
-  }
-</style>
-
-
+    footer p:hover {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -131,19 +132,17 @@
 
     <div class="diary" id="diary" contenteditable="true"></div>
 
-  <p style="margin-top: 1.5rem; text-align: center;">
-  <a href="vault.html" style="color: #ffb6c1;">Go to my secret vault 🔐</a>
-</p>
-
+    <p class="vault-link">
+      <a href="vault.html" style="color: #ffb6c1;">Go to my secret vault 🔐</a>
+    </p>
   </div>
 
   <footer>
-  <p> This diary knows more than anyone else.</p>
-  <p> Made by Samrat</p>
-  <p>Last seen 4:13 AM</p>
-    <p>  Active since 2:57 AM </p> 
-    
-</footer>
+    <p>This diary knows more than anyone else.</p>
+    <p>Made by Samrat</p>
+    <p>Last seen 4:13 AM</p>
+    <p>Active since 2:57 AM</p>
+  </footer>
 
   <script>
     // Starfield generator
