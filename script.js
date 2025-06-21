@@ -1,8 +1,4 @@
-// script.js — Anime Starfield Effect + Editable Diary Auto-Save
-
 const starsContainer = document.getElementById('stars');
-
-// Create animated star field
 for (let i = 0; i < 100; i++) {
   const star = document.createElement('div');
   star.className = 'star';
@@ -12,19 +8,19 @@ for (let i = 0; i < 100; i++) {
   starsContainer.appendChild(star);
 }
 
-// Auto-save diary entries in localStorage
 const diary = document.getElementById('diary');
 
-// Load saved diary entry
+// Replace default content with saved one (only if saved exists)
 window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem('diaryEntry');
-  if (saved) diary.innerHTML = saved;
+  if (saved && diary) {
+    diary.innerHTML = saved;
+  }
 });
 
-// Save diary entry as user types
+// Auto-save on typing
 if (diary) {
   diary.addEventListener('input', () => {
     localStorage.setItem('diaryEntry', diary.innerHTML);
   });
 }
-
