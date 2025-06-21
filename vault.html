@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Secret Vault 🔐</title>
-  <link rel="stylesheet" href="style.css">
   <style>
     body {
       background: linear-gradient(#0f0c29, #302b63, #24243e);
@@ -12,6 +11,30 @@
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
       padding: 2rem;
+      overflow: hidden;
+    }
+
+    .lock-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      font-size: 2rem;
+      animation: fadeOut 2.5s ease forwards;
+      animation-delay: 2s;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
     }
 
     input[type="password"] {
@@ -38,38 +61,57 @@
       margin-bottom: 1rem;
     }
 
+    #vault-content {
+      opacity: 0;
+      transition: opacity 1s ease;
+      margin-top: 2rem;
+    }
+
+    #vault-content.visible {
+      opacity: 1;
+    }
+
     #secret-content {
       display: none;
       margin-top: 2rem;
       font-style: italic;
     }
-
-    .fade-in {
-      animation: fade 1s ease-in;
-    }
-
-    @keyframes fade {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
   </style>
 </head>
 <body>
-  <h2>🌸 Secret Vault 🌸</h2>
-  <p class="hint">Hint: Romeo's soulmate + Current year (no cap, no space)</p>
 
-  <input type="password" id="password" placeholder="Enter secret phrase">
-  <br>
-  <button onclick="checkPassword()">Unlock</button>
+  <!-- Lock animation screen -->
+  <div class="lock-screen" id="lockScreen">🔐 Unlocking Secrets...</div>
 
-  <div id="secret-content" class="fade-in">
-    <h3>💌 My Hidden Thoughts</h3>
-    <h4> Timeline: </h4>
-    <p>21ST JUNE 2025: Sometimes I write letters I'll never send. This is where I leave pieces of myself that only the stars understand.</p>
-    <p>// +Add your private notes here</p>
+  <!-- Real vault content -->
+  <div id="vault-content">
+    <h2>🌸 Secret Vault 🌸</h2>
+    <p class="hint">Hint: Romeo's soulmate + Current year (no cap, no space)</p>
+
+    <input type="password" id="password" placeholder="Enter secret phrase">
+    <br>
+    <button onclick="checkPassword()">Unlock</button>
+
+    <div id="secret-content">
+      <h3>💌 My Hidden Thoughts</h3>
+      <h4> Timeline: </h4>
+      <p>21ST JUNE 2025: Sometimes I write letters I'll never send. This is where I leave pieces of myself that only the stars understand.</p>
+      <p>// +Add your private notes here</p>
+    </div>
   </div>
 
   <script>
+    // Remove lock screen after animation ends
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const lock = document.getElementById('lockScreen');
+        lock.style.display = 'none';
+
+        // Show actual content
+        document.getElementById('vault-content').classList.add('visible');
+      }, 2500); // matches animation-delay + duration
+    });
+
     function checkPassword() {
       const input = document.getElementById('password').value;
       const secret = document.getElementById('secret-content');
@@ -81,8 +123,6 @@
       }
     }
   </script>
-  
-  <div class="lock-message">🔐 Unlocking Secrets...</div>
 
 </body>
 </html>
