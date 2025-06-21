@@ -89,6 +89,19 @@
       margin-top: 2rem;
       font-style: italic;
     }
+    
+    .editable-box {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  text-align: left;
+  font-family: 'Rubik', sans-serif;
+  white-space: pre-wrap;
+  min-height: 150px;
+}
+
   </style>
 </head>
 <body>
@@ -104,14 +117,15 @@
     <input type="password" id="password" placeholder="Enter secret phrase"><br>
     <button onclick="checkPassword()">Unlock</button>
 
-    <div id="secret-content">
-      <h3>💌 My Hidden Thoughts</h3>
-      <h4>Timeline:</h4>
+  <div id="secret-content">
+  <h3>💌 My Hidden Thoughts</h3>
+  <h4>Timeline:</h4>
       <p>21ST JUNE 2025: Sometimes I write letters I'll never send. This is where I leave pieces of myself that only the stars understand.</p>
-      <p>22ND JUNE 2025:No world is fair. We all have choices. Everyone I meet in this world has a fear, someone to love, and is missing something 
-      <p>// +Add your private notes here</p>
-    </div>
+      <p>22ND JUNE 2025:No world is fair. We all have choices. Everyone I meet in this world has a fear, someone to love, and is missing something </p>
+  <div id="vault-notes" contenteditable="true" class="editable-box">
+    // Add your private notes here...
   </div>
+</div>
 
   <script>
     // Reveal vault after lock animation
