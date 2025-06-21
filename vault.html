@@ -7,90 +7,100 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<!DOCTYPE html>
 
-    body {
-      background: linear-gradient(#0f0c29, #302b63, #24243e);
-      color: #fff;
-      font-family: 'Rubik', sans-serif;
-      text-align: center;
-      overflow: hidden;
-      height: 100vh;
-    }
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Secret Vault 🔐</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
 
-    /* 🔐 Lock screen */
-    .lock-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: black;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      z-index: 1000;
-      animation: fadeOut 2s forwards;
-      animation-delay: 2.5s;
-    }
+```
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    @keyframes fadeOut {
-      to {
-        opacity: 0;
-        visibility: hidden;
-      }
-    }
+body {
+  background: linear-gradient(#0f0c29, #302b63, #24243e);
+  color: #fff;
+  font-family: 'Rubik', sans-serif;
+  text-align: center;
+  overflow: hidden;
+  height: 100vh;
+}
 
-    /* 🔓 Vault content (initially hidden) */
-    #vault-content {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 1s ease;
-      padding: 2rem;
-      margin-top: 4rem;
-    }
+.lock-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  z-index: 1000;
+  animation: fadeOut 2s forwards;
+  animation-delay: 2.5s;
+}
 
-    #vault-content.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
 
-    input[type="password"] {
-      padding: 0.5rem;
-      border-radius: 10px;
-      border: none;
-      margin: 1rem 0;
-      width: 220px;
-      text-align: center;
-    }
+#vault-content {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+  padding: 2rem;
+  margin-top: 4rem;
+}
 
-    button {
-      background-color: #ff66c4;
-      border: none;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 10px;
-      cursor: pointer;
-    }
+#vault-content.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
 
-    .hint {
-      color: #aaa;
-      font-size: 0.9rem;
-      margin-bottom: 1rem;
-    }
+input[type="password"] {
+  padding: 0.5rem;
+  border-radius: 10px;
+  border: none;
+  margin: 1rem 0;
+  width: 220px;
+  text-align: center;
+}
 
-    #secret-content {
-      display: none;
-      margin-top: 2rem;
-      font-style: italic;
-    }
-    
-    .editable-box {
+button {
+  background-color: #ff66c4;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.hint {
+  color: #aaa;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+#secret-content {
+  display: none;
+  margin-top: 2rem;
+  font-style: italic;
+}
+
+.editable-box {
   margin-top: 1rem;
   padding: 1rem;
   background: rgba(255,255,255,0.05);
@@ -102,29 +112,98 @@
   min-height: 150px;
 }
 
+.note-entry {
+  background: rgba(255,255,255,0.07);
+  border-radius: 10px;
+  padding: 1rem;
+  margin: 1rem 0;
+  text-align: left;
+}
+```
+
   </style>
 </head>
 <body>
 
-  <!-- 🔐 Lock screen message -->
   <div class="lock-screen" id="lockScreen">🔐 Unlocking Secrets...</div>
 
-  <!-- 🌸 Hidden Vault -->
   <div id="vault-content">
     <h2>🌸 Secret Vault 🌸</h2>
     <p class="hint">Hint: Romeo's soulmate + Current year (no cap, no space)</p>
 
-    <input type="password" id="password" placeholder="Enter secret phrase"><br>
-    <button onclick="checkPassword()">Unlock</button>
+```
+<input type="password" id="password" placeholder="Enter secret phrase"><br>
+<button onclick="checkPassword()">Unlock</button>
 
-  <div id="secret-content">
+<div id="secret-content">
   <h3>💌 My Hidden Thoughts</h3>
   <h4>Timeline:</h4>
-      
-  <div id="vault-notes" contenteditable="true" class="editable-box">
-    Add your private notes here...
-  </div>
+
+  <div id="notes-container"></div>
+  <textarea id="note-input" placeholder="Write a new note..." rows="4" style="width: 100%; border-radius: 10px; margin-top: 1rem; padding: 1rem;"></textarea><br>
+  <button onclick="addNote()">➕ Add Note</button>
+  <button onclick="clearNotes()">🗑 Clear All</button>
 </div>
+```
+
+  </div>
+
+  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('lockScreen').style.display = 'none';
+        document.getElementById('vault-content').classList.add('visible');
+      }, 2500);
+    });
+
+    function checkPassword() {
+      const input = document.getElementById('password').value;
+      const secret = document.getElementById('secret-content');
+      if (input.toLowerCase() === "juliet2025") {
+        secret.style.display = 'block';
+        loadNotes();
+      } else {
+        alert("Incorrect passphrase 🌸");
+      }
+    }
+
+    function loadNotes() {
+      const container = document.getElementById('notes-container');
+      const saved = JSON.parse(localStorage.getItem("vaultNotes") || "[]");
+      container.innerHTML = "";
+      saved.forEach(note => {
+        const div = document.createElement("div");
+        div.className = "note-entry";
+        div.innerHTML = `<strong>${note.time}</strong><br>${note.text}`;
+        container.appendChild(div);
+      });
+    }
+
+    function addNote() {
+      const input = document.getElementById('note-input');
+      const text = input.value.trim();
+      if (!text) return;
+      const now = new Date();
+      const time = now.toLocaleString();
+
+      const notes = JSON.parse(localStorage.getItem("vaultNotes") || "[]");
+      notes.unshift({ text, time });
+      localStorage.setItem("vaultNotes", JSON.stringify(notes));
+
+      input.value = "";
+      loadNotes();
+    }
+
+    function clearNotes() {
+      if (confirm("Are you sure you want to delete all notes?")) {
+        localStorage.removeItem("vaultNotes");
+        loadNotes();
+      }
+    }
+  </script>
+
+</body>
+
 
   <script>
     // Reveal vault after lock animation
