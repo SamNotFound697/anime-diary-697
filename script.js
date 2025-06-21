@@ -13,10 +13,11 @@ for (let i = 0; i < 100; i++) {
 const diary = document.getElementById('diary');
 
 window.addEventListener('DOMContentLoaded', () => {
-  const saved = localStorage.getItem('diaryEntry');
-  if (saved && diary) {
-    diary.innerHTML = saved;
-  }
+ const saved = localStorage.getItem('diaryEntry');
+if (saved && diary) {
+  diary.innerHTML = saved;
+}
+
 });
 
 if (diary) {
