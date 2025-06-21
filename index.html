@@ -8,6 +8,7 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Rubik:wght@400;700&display=swap');
 
+
 * {
   margin: 0;
   padding: 0;
@@ -95,14 +96,12 @@ header h1 {
 }
 
 .note-entry button {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
   background: #ff6666;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  margin-left: 5px;
 }
 
 textarea#note-input {
@@ -164,7 +163,6 @@ footer p:hover {
   <div class="content">
     <p>This is my little hidden space and vibe zone. Feel the night, listen to the stars, and write your heart out.</p>
 
-
 <div class="spotify">
   <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/4bCJvqGobXLJhC1p5YBsxY?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 </div>
@@ -178,18 +176,16 @@ footer p:hover {
   <a href="vault.html" style="color: #ffb6c1;">Go to my secret vault 🔐</a>
 </p>
 
-
   </div>
 
   <footer>
     <p>This diary knows more than anyone else.</p>
     <p>Made by Samrat</p>
-    <p>Last seen on 21ST JUNE 2025, 4:13 AM</p>
-    <p>Active since 21ST JUNE 2025, 2:57 AM</p>
+    <p id="last-seen">Last seen: loading...</p>
+    <p id="active-since">Active since: loading...</p>
   </footer>
 
   <script>
-    // Starfield generator
     const starsContainer = document.getElementById('stars');
     for (let i = 0; i < 100; i++) {
       const star = document.createElement('div');
@@ -200,13 +196,12 @@ footer p:hover {
       starsContainer.appendChild(star);
     }
 
-    // Fade in the body
     window.addEventListener('load', () => {
       document.body.classList.add('fade-in');
+      updateTimestamps();
       loadNotes();
     });
 
-    // Diary Note System
     const notesContainer = document.getElementById("notes-container");
     const noteInput = document.getElementById("note-input");
     const addBtn = document.getElementById("add-note");
@@ -217,7 +212,9 @@ footer p:hover {
       saved.forEach((note, index) => {
         const div = document.createElement("div");
         div.className = "note-entry";
-        div.innerHTML = `<strong>${note.time}</strong><br>${note.text}<br><button onclick="deleteNote(${index})">🗑</button>`;
+        div.innerHTML = `<strong>${note.time}</strong><br><span>${note.text}</span><br>
+          <button onclick="editNote(${index})">✏️</button>
+          <button onclick="deleteNote(${index})">🗑</button>`;
         notesContainer.appendChild(div);
       });
     }
@@ -227,6 +224,16 @@ footer p:hover {
       notes.splice(index, 1);
       localStorage.setItem("diaryNotes", JSON.stringify(notes));
       loadNotes();
+    }
+
+    function editNote(index) {
+      const notes = JSON.parse(localStorage.getItem("diaryNotes") || "[]");
+      const newText = prompt("Edit your note:", notes[index].text);
+      if (newText !== null) {
+        notes[index].text = newText;
+        localStorage.setItem("diaryNotes", JSON.stringify(notes));
+        loadNotes();
+      }
     }
 
     addBtn.addEventListener("click", () => {
@@ -239,7 +246,29 @@ footer p:hover {
       localStorage.setItem("diaryNotes", JSON.stringify(notes));
       noteInput.value = "";
       loadNotes();
+      updateLastSeen(time);
     });
+
+    function updateTimestamps() {
+      const firstActive = localStorage.getItem("diaryFirstActive");
+      if (!firstActive) {
+        const now = new Date().toLocaleString();
+        localStorage.setItem("diaryFirstActive", now);
+        document.getElementById("active-since").innerText = `Active since: ${now}`;
+      } else {
+        document.getElementById("active-since").innerText = `Active since: ${firstActive}`;
+      }
+
+      const lastSeen = localStorage.getItem("diaryLastSeen");
+      if (lastSeen) {
+        document.getElementById("last-seen").innerText = `Last seen: ${lastSeen}`;
+      }
+    }
+
+    function updateLastSeen(time) {
+      localStorage.setItem("diaryLastSeen", time);
+      document.getElementById("last-seen").innerText = `Last seen: ${time}`;
+    }
   </script>
 
 </body>
