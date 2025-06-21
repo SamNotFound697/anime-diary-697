@@ -1,13 +1,4 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Secret Vault 🔐</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
-
-<!DOCTYPE html>
 
 <html lang="en">
 <head>
@@ -76,6 +67,8 @@ input[type="password"] {
   margin: 1rem 0;
   width: 220px;
   text-align: center;
+  background-color: #1c1c3c;
+  color: white;
 }
 
 button {
@@ -85,7 +78,7 @@ button {
   padding: 0.5rem 1rem;
   border-radius: 10px;
   cursor: pointer;
-  margin-top: 1rem;
+  margin: 0.5rem;
 }
 
 .hint {
@@ -100,16 +93,10 @@ button {
   font-style: italic;
 }
 
-.editable-box {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 12px;
-  text-align: left;
-  font-family: 'Rubik', sans-serif;
-  white-space: pre-wrap;
-  min-height: 150px;
+textarea {
+  background-color: #1c1c3c;
+  color: white;
+  border: 1px solid #444;
 }
 
 .note-entry {
@@ -118,6 +105,16 @@ button {
   padding: 1rem;
   margin: 1rem 0;
   text-align: left;
+  position: relative;
+}
+
+.note-entry button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff4c61;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.6rem;
 }
 ```
 
@@ -142,7 +139,6 @@ button {
   <div id="notes-container"></div>
   <textarea id="note-input" placeholder="Write a new note..." rows="4" style="width: 100%; border-radius: 10px; margin-top: 1rem; padding: 1rem;"></textarea><br>
   <button onclick="addNote()">➕ Add Note</button>
-  <button onclick="clearNotes()">🗑 Clear All</button>
 </div>
 ```
 
@@ -171,10 +167,10 @@ button {
       const container = document.getElementById('notes-container');
       const saved = JSON.parse(localStorage.getItem("vaultNotes") || "[]");
       container.innerHTML = "";
-      saved.forEach(note => {
+      saved.forEach((note, index) => {
         const div = document.createElement("div");
         div.className = "note-entry";
-        div.innerHTML = `<strong>${note.time}</strong><br>${note.text}`;
+        div.innerHTML = `<strong>${note.time}</strong><br>${note.text} <button onclick="deleteNote(${index})">🗑</button>`;
         container.appendChild(div);
       });
     }
@@ -194,42 +190,13 @@ button {
       loadNotes();
     }
 
-    function clearNotes() {
-      if (confirm("Are you sure you want to delete all notes?")) {
-        localStorage.removeItem("vaultNotes");
-        loadNotes();
-      }
+    function deleteNote(index) {
+      const notes = JSON.parse(localStorage.getItem("vaultNotes") || "[]");
+      notes.splice(index, 1);
+      localStorage.setItem("vaultNotes", JSON.stringify(notes));
+      loadNotes();
     }
   </script>
-
-</body>
-
-
-  <script>
-    // Reveal vault after lock animation
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        const lock = document.getElementById('lockScreen');
-        lock.style.display = 'none';
-
-        const vault = document.getElementById('vault-content');
-        vault.classList.add('visible');
-      }, 2500); // match delay
-    });
-
-    function checkPassword() {
-      const input = document.getElementById('password').value;
-      const secret = document.getElementById('secret-content');
-
-      if (input.toLowerCase() === "juliet2025") {
-        secret.style.display = 'block';
-      } else {
-        alert("Incorrect passphrase 🌸");
-      }
-    }
-  </script>
-    
-<script src="js/vault.js"></script>
 
 </body>
 </html>
