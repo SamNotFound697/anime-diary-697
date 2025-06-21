@@ -5,29 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Secret Vault 🔐</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       background: linear-gradient(#0f0c29, #302b63, #24243e);
       color: #fff;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Rubik', sans-serif;
       text-align: center;
-      padding: 2rem;
       overflow: hidden;
+      height: 100vh;
     }
 
+    /* 🔐 Lock screen */
     .lock-screen {
       position: fixed;
       top: 0;
       left: 0;
-      height: 100vh;
       width: 100vw;
-      background-color: #000;
+      height: 100vh;
+      background: black;
       display: flex;
-      justify-content: center;
       align-items: center;
-      z-index: 999;
+      justify-content: center;
       font-size: 2rem;
-      animation: fadeOut 2.5s ease forwards;
-      animation-delay: 2s;
+      z-index: 1000;
+      animation: fadeOut 2s forwards;
+      animation-delay: 2.5s;
     }
 
     @keyframes fadeOut {
@@ -37,12 +46,26 @@
       }
     }
 
+    /* 🔓 Vault content (initially hidden) */
+    #vault-content {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+      padding: 2rem;
+      margin-top: 4rem;
+    }
+
+    #vault-content.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
     input[type="password"] {
       padding: 0.5rem;
       border-radius: 10px;
       border: none;
       margin: 1rem 0;
-      width: 200px;
+      width: 220px;
       text-align: center;
     }
 
@@ -61,16 +84,6 @@
       margin-bottom: 1rem;
     }
 
-    #vault-content {
-      opacity: 0;
-      transition: opacity 1s ease;
-      margin-top: 2rem;
-    }
-
-    #vault-content.visible {
-      opacity: 1;
-    }
-
     #secret-content {
       display: none;
       margin-top: 2rem;
@@ -80,43 +93,42 @@
 </head>
 <body>
 
-  <!-- Lock animation screen -->
+  <!-- 🔐 Lock screen message -->
   <div class="lock-screen" id="lockScreen">🔐 Unlocking Secrets...</div>
 
-  <!-- Real vault content -->
+  <!-- 🌸 Hidden Vault -->
   <div id="vault-content">
     <h2>🌸 Secret Vault 🌸</h2>
     <p class="hint">Hint: Romeo's soulmate + Current year (no cap, no space)</p>
 
-    <input type="password" id="password" placeholder="Enter secret phrase">
-    <br>
+    <input type="password" id="password" placeholder="Enter secret phrase"><br>
     <button onclick="checkPassword()">Unlock</button>
 
     <div id="secret-content">
       <h3>💌 My Hidden Thoughts</h3>
-      <h4> Timeline: </h4>
+      <h4>Timeline:</h4>
       <p>21ST JUNE 2025: Sometimes I write letters I'll never send. This is where I leave pieces of myself that only the stars understand.</p>
       <p>// +Add your private notes here</p>
     </div>
   </div>
 
   <script>
-    // Remove lock screen after animation ends
+    // Reveal vault after lock animation
     window.addEventListener('load', () => {
       setTimeout(() => {
         const lock = document.getElementById('lockScreen');
         lock.style.display = 'none';
 
-        // Show actual content
-        document.getElementById('vault-content').classList.add('visible');
-      }, 2500); // matches animation-delay + duration
+        const vault = document.getElementById('vault-content');
+        vault.classList.add('visible');
+      }, 2500); // match delay
     });
 
     function checkPassword() {
       const input = document.getElementById('password').value;
       const secret = document.getElementById('secret-content');
 
-      if (input === "juliet2025") {
+      if (input.toLowerCase() === "juliet2025") {
         secret.style.display = 'block';
       } else {
         alert("Incorrect passphrase 🌸");
