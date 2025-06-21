@@ -1,1 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Secret Vault 🔐</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: linear-gradient(#0f0c29, #302b63, #24243e);
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    input[type="password"] {
+      padding: 0.5rem;
+      border-radius: 10px;
+      border: none;
+      margin: 1rem 0;
+      width: 200px;
+      text-align: center;
+    }
+
+    button {
+      background-color: #ff66c4;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .hint {
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    #secret-content {
+      display: none;
+      margin-top: 2rem;
+      font-style: italic;
+    }
+
+    .fade-in {
+      animation: fade 1s ease-in;
+    }
+
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <h2>🌸 Secret Vault 🌸</h2>
+  <p class="hint">Hint: It blooms in spring, and protects what matters most.</p>
+
+  <input type="password" id="password" placeholder="Enter secret phrase">
+  <br>
+  <button onclick="checkPassword()">Unlock</button>
+
+  <div id="secret-content" class="fade-in">
+    <h3>💌 My Hidden Thoughts</h3>
+    <p>Sometimes I write letters I'll never send. This is where I leave pieces of myself that only the stars understand.</p>
+    <p>// Add your private notes here</p>
+  </div>
+
+  <script>
+    function checkPassword() {
+      const input = document.getElementById('password').value;
+      const secret = document.getElementById('secret-content');
+
+      if (input === "sakura2025") {
+        secret.style.display = 'block';
+      } else {
+        alert("Incorrect passphrase 🌸");
+      }
+    }
+  </script>
+</body>
+</html>
 
