@@ -78,18 +78,26 @@
       margin-top: 2rem;
     }
 
-    .diary {
-      margin-top: 3rem;
-      padding: 1rem;
-      background: #111927;
-      border-radius: 12px;
-      max-height: 250px;
-      overflow-y: auto;
-      font-family: 'JetBrains Mono', monospace;
-      text-align: left;
-      line-height: 1.6;
-      white-space: pre-wrap;
-    }
+   .diary {
+  margin-top: 3rem;
+  padding: 1rem;
+  background: #111927;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255, 192, 203, 0.1);
+  max-height: 250px;
+  overflow-y: auto;
+  font-family: 'JetBrains Mono', monospace;
+  text-align: left;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  transition: box-shadow 0.3s ease;
+}
+
+.diary:focus {
+  box-shadow: 0 0 25px rgba(255, 192, 203, 0.3);
+  outline: none;
+}
 
     p.vault-link {
       margin-top: 1.5rem;
@@ -114,6 +122,15 @@
     footer p:hover {
       opacity: 1;
     }
+    
+    body {
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+body.fade-in {
+  opacity: 1;
+}
+
   </style>
 </head>
 <body>
@@ -158,5 +175,12 @@
   </script>
 
   <script src="script.js"></script>
+  <script>
+  // Fade in the body
+  window.addEventListener('load', () => {
+    document.body.classList.add('fade-in');
+  });
+</script>
+
 </body>
 </html>
