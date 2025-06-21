@@ -56,9 +56,9 @@
 </head>
 <body>
   <h2>🌸 Secret Vault 🌸</h2>
-  <p class="hint">Hint: romeo's soulmate + current year (no space no cap)</p>
+  <p class="hint">Hint: It blooms in spring, and protects what matters most.</p>
 
-  <input type="password" id="password" placeholder="Enter secret code">
+  <input type="password" id="password" placeholder="Enter secret phrase">
   <br>
   <button onclick="checkPassword()">Unlock</button>
 
@@ -73,7 +73,7 @@
       const input = document.getElementById('password').value;
       const secret = document.getElementById('secret-content');
 
-      if (input === "juliet2025") {
+      if (input === "sakura2025") {
         secret.style.display = 'block';
       } else {
         alert("Incorrect passphrase 🌸");
@@ -82,4 +82,3 @@
   </script>
 </body>
 </html>
-
