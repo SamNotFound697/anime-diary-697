@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Mysterious Night</title>
+  <link rel="stylesheet" href="script.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Rubik:wght@400;700&display=swap');
 
@@ -84,81 +85,30 @@
       margin-top: 2rem;
     }
 
-    .note-section {
-      margin-top: 2rem;
-    }
-
-    .note {
-      background: #111927;
+    .diary {
+      margin-top: 3rem;
       padding: 1rem;
+      background: #111927;
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
-      margin-bottom: 1rem;
-      position: relative;
-      transition: transform 0.2s ease;
-    }
-
-    .note:hover {
-      transform: scale(1.01);
-    }
-
-    .note-buttons {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      display: flex;
-      gap: 0.4rem;
-    }
-
-    .note-buttons button {
-      background: #ff66c4;
-      color: white;
-      border: none;
-      padding: 0.4rem 0.8rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.3s ease;
-    }
-
-    .note-buttons button:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 10px #ff66c4aa;
-    }
-
-    .note[locked] .delete-btn {
-      display: none;
-    }
-
-    .vault-link {
-      text-align: center;
-      margin-top: 1.5rem;
-    }
-
-    .diary-input {
-      width: 100%;
-      padding: 1rem;
-      margin-top: 1rem;
-      background: #1e1e30;
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255, 192, 203, 0.1);
+      max-height: 250px;
+      overflow-y: auto;
       font-family: 'JetBrains Mono', monospace;
+      text-align: left;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      transition: box-shadow 0.3s ease;
     }
 
-    .action-button {
-      margin-top: 1rem;
-      background: #00bcd4;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 10px;
-      color: white;
-      cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    .diary:focus {
+      box-shadow: 0 0 25px rgba(255, 192, 203, 0.3);
+      outline: none;
     }
 
-    .action-button:hover {
-      transform: scale(1.08);
-      box-shadow: 0 0 10px #00bcd4aa;
+    p.vault-link {
+      margin-top: 1.5rem;
+      text-align: center;
     }
 
     footer {
@@ -179,10 +129,42 @@
     footer p:hover {
       opacity: 1;
     }
+
+    #music-controls {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    #music-url {
+      width: 60%;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: none;
+      font-family: 'Rubik', sans-serif;
+    }
+
+    #update-music {
+      background: #ff66c4;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-left: 0.5rem;
+    }
+
+    #update-music:hover {
+      background: #ff85d0;
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
   <div class="stars" id="stars"></div>
+
+  <audio autoplay loop>
+    <source src="bg-music.mp3" type="audio/mpeg">
+  </audio>
 
   <header>
     <h1>Welcome to My Anime Night Space 🌙</h1>
@@ -192,13 +174,15 @@
     <p>This is my little hidden space and vibe zone. Feel the night, listen to the stars, and write your heart out.</p>
 
     <div class="spotify">
-      <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/4bCJvqGobXLJhC1p5YBsxY?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      <iframe id="spotify-frame" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/4bCJvqGobXLJhC1p5YBsxY?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+      <div id="music-controls">
+        <input type="text" id="music-url" placeholder="Paste new Spotify embed URL here">
+        <button id="update-music">Update Music</button>
+      </div>
     </div>
 
-    <textarea id="diary-input" class="diary-input" placeholder="Write your heart here..."></textarea>
-    <button onclick="saveNote()" class="action-button">➕ New Page</button>
-
-    <div id="note-section" class="note-section"></div>
+    <div class="diary" id="diary" contenteditable="true"></div>
 
     <p class="vault-link">
       <a href="vault.html" style="color: #ffb6c1;">Go to my secret vault 🔐</a>
@@ -213,6 +197,7 @@
   </footer>
 
   <script>
+    // Starfield generator
     const starsContainer = document.getElementById('stars');
     for (let i = 0; i < 100; i++) {
       const star = document.createElement('div');
@@ -223,77 +208,27 @@
       starsContainer.appendChild(star);
     }
 
+    // Fade in effect
     window.addEventListener('load', () => {
       document.body.classList.add('fade-in');
-      loadNotes();
-      const temp = localStorage.getItem("tempDiary") || "";
-      document.getElementById("diary-input").value = temp;
     });
 
-    const input = document.getElementById("diary-input");
-    input.addEventListener("input", () => {
-      localStorage.setItem("tempDiary", input.value);
+    // Replace Spotify playlist
+    document.getElementById("update-music").addEventListener("click", () => {
+      const url = document.getElementById("music-url").value;
+      if (url.trim()) {
+        document.getElementById("spotify-frame").src = url.trim();
+        localStorage.setItem("customSpotify", url.trim());
+      }
     });
 
-    function saveNote() {
-      const text = input.value.trim();
-      if (!text) return;
-
-      const now = new Date();
-      const time = now.toLocaleString();
-
-      const notes = JSON.parse(localStorage.getItem("diaryPages") || "[]");
-      notes.unshift({ text, time, locked: false });
-      localStorage.setItem("diaryPages", JSON.stringify(notes));
-      localStorage.removeItem("tempDiary");
-
-      input.value = "";
-      loadNotes();
-    }
-
-    function loadNotes() {
-      const section = document.getElementById('note-section');
-      const notes = JSON.parse(localStorage.getItem("diaryPages") || "[]");
-      section.innerHTML = "";
-
-      notes.forEach((note, i) => {
-        const div = document.createElement("div");
-        div.className = "note";
-        if (note.locked) div.setAttribute("locked", true);
-
-        div.innerHTML = `
-          <small>${note.time}</small>
-          <p contenteditable="true" oninput="updateNote(${i}, this.innerText)">${note.text}</p>
-          <div class="note-buttons">
-            <button onclick="toggleLock(${i})">${note.locked ? '🔒' : '🔓'}</button>
-            <button class="delete-btn" onclick="deleteNote(${i})">🗑</button>
-          </div>
-        `;
-
-        section.appendChild(div);
-      });
-    }
-
-    function updateNote(index, newText) {
-      const notes = JSON.parse(localStorage.getItem("diaryPages") || "[]");
-      notes[index].text = newText;
-      localStorage.setItem("diaryPages", JSON.stringify(notes));
-    }
-
-    function deleteNote(index) {
-      const notes = JSON.parse(localStorage.getItem("diaryPages") || "[]");
-      if (notes[index].locked) return;
-      notes.splice(index, 1);
-      localStorage.setItem("diaryPages", JSON.stringify(notes));
-      loadNotes();
-    }
-
-    function toggleLock(index) {
-      const notes = JSON.parse(localStorage.getItem("diaryPages") || "[]");
-      notes[index].locked = !notes[index].locked;
-      localStorage.setItem("diaryPages", JSON.stringify(notes));
-      loadNotes();
+    // Load saved Spotify link
+    const savedSpotify = localStorage.getItem("customSpotify");
+    if (savedSpotify) {
+      document.getElementById("spotify-frame").src = savedSpotify;
     }
   </script>
+
+  <script src="script.js"></script>
 </body>
 </html>
