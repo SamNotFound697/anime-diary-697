@@ -255,6 +255,18 @@
   </footer>
 
   <script>
+    
+    function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.style.opacity = 1;
+  toast.style.bottom = '40px';
+  setTimeout(() => {
+    toast.style.opacity = 0;
+    toast.style.bottom = '20px';
+  }, 3000); // visible for 3 seconds
+}
+
     // Starfield generator
     const starsContainer = document.getElementById('stars');
     for (let i = 0; i < 100; i++) {
@@ -291,29 +303,32 @@
 
     let entries = JSON.parse(localStorage.getItem('diaryEntries') || '[]');
 
-    function renderEntries() {
-      document.getElementById("set-reminder").addEventListener("click", () => {
+    // Reminder feature
+document.getElementById("set-reminder").addEventListener("click", () => {
   const reminderText = document.getElementById("reminder-text").value.trim();
   const reminderTime = new Date(document.getElementById("reminder-time").value);
   const now = new Date();
 
   if (!reminderText || isNaN(reminderTime)) {
-    alert("Please enter a valid reminder and time.");
+    showToast("Please enter a valid reminder and time.");
     return;
   }
 
   const delay = reminderTime.getTime() - now.getTime();
   if (delay <= 0) {
-    alert("Please set a future time.");
+    showToast("Please set a future time.");
     return;
   }
 
   setTimeout(() => {
-    alert(`🔔 Reminder: ${reminderText}`);
+    showToast(`🔔 Reminder: ${reminderText}`);
   }, delay);
 
-  alert(`Reminder set for ${reminderTime.toLocaleString()}`);
+ // Toaster Reminder
+  showToast(`⏰ Reminder set for ${reminderTime.toLocaleString()}`);
 });
+
+    function renderEntries() {
 
       entriesDiv.innerHTML = '';
       entries.forEach((entry, index) => {
@@ -381,6 +396,23 @@
     const draft = localStorage.getItem('diaryEntry');
     if (draft) newEntryInput.value = draft;
   </script>
+  
+<div id="toast" style="
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 102, 196, 0.9);
+  color: white;
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px #ff66c4;
+  font-family: 'Rubik', sans-serif;
+  opacity: 0;
+  transition: opacity 0.5s ease, bottom 0.5s ease;
+  z-index: 9999;
+  pointer-events: none;
+"></div>
 
 </body>
 </html>
