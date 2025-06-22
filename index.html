@@ -84,30 +84,53 @@
       margin-top: 2rem;
     }
 
-    .diary {
-      margin-top: 3rem;
-      padding: 1rem;
+    .note-section {
+      margin-top: 2rem;
+    }
+
+    .note {
       background: #111927;
+      padding: 1rem;
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
-      box-shadow: 0 0 15px rgba(255, 192, 203, 0.1);
-      max-height: 250px;
-      overflow-y: auto;
-      font-family: 'JetBrains Mono', monospace;
-      text-align: left;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      transition: box-shadow 0.3s ease;
+      margin-bottom: 1rem;
+      position: relative;
     }
 
-    .diary:focus {
-      box-shadow: 0 0 25px rgba(255, 192, 203, 0.3);
-      outline: none;
+    .note-buttons {
+      position: absolute;
+      top: 10px;
+      right: 10px;
     }
 
-    p.vault-link {
-      margin-top: 1.5rem;
+    .note-buttons button {
+      background: #ff66c4;
+      color: white;
+      border: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      margin-left: 0.3rem;
+      cursor: pointer;
+    }
+
+    .note[locked] .delete-btn {
+      display: none;
+    }
+
+    .vault-link {
       text-align: center;
+      margin-top: 1.5rem;
+    }
+
+    .diary-input {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 1rem;
+      background: #1e1e30;
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     footer {
@@ -144,7 +167,10 @@
       <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/4bCJvqGobXLJhC1p5YBsxY?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
 
-    <div class="diary" id="diary" contenteditable="true"></div>
+    <textarea id="diary-input" class="diary-input" placeholder="Write your heart here..."></textarea>
+    <button onclick="saveNote()" style="margin-top:1rem; background:#00bcd4; border:none; padding:0.5rem 1rem; border-radius:8px; color:white; cursor:pointer;">➕ New Page</button>
+
+    <div id="note-section" class="note-section"></div>
 
     <p class="vault-link">
       <a href="vault.html" style="color: #ffb6c1;">Go to my secret vault 🔐</a>
@@ -169,21 +195,70 @@
       starsContainer.appendChild(star);
     }
 
-    // Fade in body
     window.addEventListener('load', () => {
       document.body.classList.add('fade-in');
-
-      const diary = document.getElementById('diary');
-      const savedEntry = localStorage.getItem('diaryEntry');
-      if (savedEntry && diary) {
-        diary.textContent = savedEntry;
-      }
-      if (diary) {
-        diary.addEventListener('input', () => {
-          localStorage.setItem('diaryEntry', diary.textContent);
-        });
-      }
+      loadNotes();
     });
+
+    function saveNote() {
+      const input = document.getElementById('diary-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const now = new Date();
+      const time = now.toLocaleString();
+
+      const notes = JSON.parse(localStorage.getItem("diaryPages") || "[]");
+      notes.unshift({ text, time, locked: false });
+      localStorage.setItem("diaryPages", JSON.stringify(notes));
+
+      input.value = "";
+      loadNotes();
+    }
+
+    function loadNotes() {
+      const section = document.getElementById('note-section');
+      const notes = JSON.parse(localStorage.getItem("diaryPages") || "[]");
+      section.innerHTML = "";
+
+      notes.forEach((note, i) => {
+        const div = document.createElement("div");
+        div.className = "note";
+        if (note.locked) div.setAttribute("locked", true);
+
+        div.innerHTML = `
+          <small>${note.time}</small>
+          <p contenteditable="true" oninput="updateNote(${i}, this.innerText)">${note.text}</p>
+          <div class="note-buttons">
+            <button onclick="toggleLock(${i})">${note.locked ? '🔒' : '🔓'}</button>
+            <button class="delete-btn" onclick="deleteNote(${i})">🗑</button>
+          </div>
+        `;
+
+        section.appendChild(div);
+      });
+    }
+
+    function updateNote(index, newText) {
+      const notes = JSON.parse(localStorage.getItem("diaryPages") || "[]");
+      notes[index].text = newText;
+      localStorage.setItem("diaryPages", JSON.stringify(notes));
+    }
+
+    function deleteNote(index) {
+      const notes = JSON.parse(localStorage.getItem("diaryPages") || "[]");
+      if (notes[index].locked) return;
+      notes.splice(index, 1);
+      localStorage.setItem("diaryPages", JSON.stringify(notes));
+      loadNotes();
+    }
+
+    function toggleLock(index) {
+      const notes = JSON.parse(localStorage.getItem("diaryPages") || "[]");
+      notes[index].locked = !notes[index].locked;
+      localStorage.setItem("diaryPages", JSON.stringify(notes));
+      loadNotes();
+    }
   </script>
 </body>
 </html>
