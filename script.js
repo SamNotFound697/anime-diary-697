@@ -3,7 +3,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const savedEntry = localStorage.getItem('diaryEntry');
 
   if (savedEntry && diary) {
-    diary.textContent = savedEntry;  // use plain text
+    diary.textContent = savedEntry;
   }
 
   if (diary) {
