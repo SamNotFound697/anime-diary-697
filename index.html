@@ -18,12 +18,6 @@
       color: #fff;
       font-family: 'Rubik', sans-serif;
       overflow-x: hidden;
-      opacity: 0;
-      transition: opacity 1.2s ease-in-out;
-    }
-
-    body.fade-in {
-      opacity: 1;
     }
 
     .stars {
@@ -105,14 +99,26 @@
       outline: none;
     }
 
-    .vault-link {
-      margin-top: 1.5rem;
+    #diary-title {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 10px;
+      border: none;
+      margin-top: 1rem;
+      font-size: 1.1rem;
       text-align: center;
     }
 
-    .vault-link a {
-      color: #ffb6c1;
-      text-decoration: none;
+    #search-diary {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 10px;
+      margin-top: 1rem;
+    }
+
+    p.vault-link {
+      margin-top: 1.5rem;
+      text-align: center;
     }
 
     footer {
@@ -133,6 +139,15 @@
     footer p:hover {
       opacity: 1;
     }
+
+    body {
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+    }
+
+    body.fade-in {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -149,22 +164,23 @@
       <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/4bCJvqGobXLJhC1p5YBsxY?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
 
+    <input id="diary-title" placeholder="Diary title...">
+    <input id="search-diary" placeholder="Search diary...">
     <div class="diary" id="diary" contenteditable="true"></div>
 
     <p class="vault-link">
-      <a href="vault.html">Go to my secret vault 🔐</a>
+      <a href="vault.html" style="color: #ffb6c1;">Go to my secret vault 🔐</a>
     </p>
   </div>
 
   <footer>
     <p>This diary knows more than anyone else.</p>
     <p>Made by Samrat</p>
-    <p>Last seen on 21ST JUNE 2025, 4:13 AM</p>
-    <p>Active since 14TH JUNE 2025, 2:57 AM</p>
+    <p>Website born on: 21ST JUNE 2025</p>
+    <p>Last seen: <span id="last-seen"></span></p>
   </footer>
 
   <script>
-    // Starfield generator
     const starsContainer = document.getElementById('stars');
     for (let i = 0; i < 100; i++) {
       const star = document.createElement('div');
@@ -175,9 +191,39 @@
       starsContainer.appendChild(star);
     }
 
-    // Fade in effect
     window.addEventListener('load', () => {
       document.body.classList.add('fade-in');
+      document.getElementById('last-seen').textContent = new Date().toLocaleString();
+    });
+
+    const diary = document.getElementById('diary');
+    const titleInput = document.getElementById('diary-title');
+    const searchInput = document.getElementById('search-diary');
+
+    const saved = JSON.parse(localStorage.getItem('diaryEntries') || '[]');
+    if (saved.length > 0) {
+      titleInput.value = saved[0].title || '';
+      diary.textContent = saved[0].content || '';
+    }
+
+    function saveDiary() {
+      const entry = {
+        title: titleInput.value.trim(),
+        content: diary.textContent,
+        timestamp: new Date().toLocaleString(),
+      };
+      localStorage.setItem('diaryEntries', JSON.stringify([entry]));
+    }
+
+    diary.addEventListener('input', saveDiary);
+    titleInput.addEventListener('input', saveDiary);
+    searchInput.addEventListener('input', () => {
+      const keyword = searchInput.value.toLowerCase();
+      const match = saved.find(entry => entry.title.toLowerCase().includes(keyword) || entry.content.toLowerCase().includes(keyword));
+      if (match) {
+        titleInput.value = match.title;
+        diary.textContent = match.content;
+      }
     });
   </script>
 </body>
