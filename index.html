@@ -4,8 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Mysterious Night</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Rubik:wght@400;700&display=swap" rel="stylesheet">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Rubik:wght@400;700&display=swap');
+
     * {
       margin: 0;
       padding: 0;
@@ -17,6 +18,12 @@
       color: #fff;
       font-family: 'Rubik', sans-serif;
       overflow-x: hidden;
+      opacity: 0;
+      transition: opacity 1.2s ease-in-out;
+    }
+
+    body.fade-in {
+      opacity: 1;
     }
 
     .stars {
@@ -72,68 +79,53 @@
       position: relative;
     }
 
-    .diary-entry {
-      background-color: #111927;
+    .spotify {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .diary {
+      margin-top: 3rem;
+      padding: 1rem;
+      background: #111927;
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
-      margin: 1rem 0;
-      padding: 1rem;
-      font-family: 'JetBrains Mono', monospace;
-      white-space: pre-wrap;
-      text-align: left;
       box-shadow: 0 0 15px rgba(255, 192, 203, 0.1);
+      max-height: 250px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', monospace;
+      text-align: left;
+      line-height: 1.6;
+      white-space: pre-wrap;
       transition: box-shadow 0.3s ease;
     }
 
-    .diary-entry:focus {
+    .diary:focus {
       box-shadow: 0 0 25px rgba(255, 192, 203, 0.3);
       outline: none;
     }
 
-    .controls {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+    p.vault-link {
+      margin-top: 1.5rem;
+      text-align: center;
     }
 
-    .controls input, .controls select {
-      padding: 0.5rem;
-      border-radius: 8px;
-      border: none;
-    }
-
-    .controls button {
-      background-color: #ff66c4;
-      border: none;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .footer {
+    footer {
       text-align: center;
       font-size: 0.9rem;
       color: #888;
       margin-top: 4rem;
       padding-bottom: 2rem;
+      line-height: 1.6;
+      white-space: normal;
     }
 
-    .footer p {
+    footer p {
       opacity: 0.7;
       transition: opacity 0.3s ease;
     }
 
-    .footer p:hover {
-      opacity: 1;
-    }
-
-    body {
-      opacity: 0;
-      transition: opacity 1.2s ease-in-out;
-    }
-
-    body.fade-in {
+    footer p:hover {
       opacity: 1;
     }
   </style>
@@ -148,89 +140,23 @@
   <div class="content">
     <p>This is my little hidden space and vibe zone. Feel the night, listen to the stars, and write your heart out.</p>
 
-    <div class="controls">
-      <input type="text" id="searchBar" placeholder="Search title or content...">
-      <select id="filterMood">
-        <option value="all">All</option>
-        <option value="happy">Happy</option>
-        <option value="sad">Sad</option>
-        <option value="love">Love</option>
-        <option value="dream">Dream</option>
-      </select>
+    <div class="spotify">
+      <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/4bCJvqGobXLJhC1p5YBsxY?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
 
-    <div id="diaryEntries"></div>
-
-    <div class="controls">
-      <input type="text" id="newTitle" placeholder="Diary title...">
-      <select id="newMood">
-        <option value="happy">Happy</option>
-        <option value="sad">Sad</option>
-        <option value="love">Love</option>
-        <option value="dream">Dream</option>
-      </select>
-      <button onclick="addDiaryEntry()">➕ Add</button>
-    </div>
-
-    <div class="diary-entry" id="diary" contenteditable="true" placeholder="Write your diary..."></div>
+    <div class="diary" id="diary" contenteditable="true"></div>
 
     <p class="vault-link">
       <a href="vault.html" style="color: #ffb6c1;">Go to my secret vault 🔐</a>
     </p>
   </div>
 
-  <div class="footer">
+  <footer>
     <p>This diary knows more than anyone else.</p>
     <p>Made by Samrat</p>
-    <p>Last seen on <span id="lastSeen"></span></p>
+    <p>Last seen on 21ST JUNE 2025, 4:13 AM</p>
     <p>Active since 21ST JUNE 2025, 2:57 AM</p>
-  </div>
-
-  <script>
-    const diaryDiv = document.getElementById('diary');
-    const lastSeen = document.getElementById('lastSeen');
-    const entriesDiv = document.getElementById('diaryEntries');
-
-    window.addEventListener('load', () => {
-      document.body.classList.add('fade-in');
-      lastSeen.textContent = new Date().toLocaleString();
-      loadEntries();
-    });
-
-    function addDiaryEntry() {
-      const title = document.getElementById('newTitle').value.trim();
-      const mood = document.getElementById('newMood').value;
-      const content = diaryDiv.textContent.trim();
-      if (!title || !content) return;
-
-      const entries = JSON.parse(localStorage.getItem('diaryEntries') || '[]');
-      const time = new Date().toLocaleString();
-      entries.unshift({ title, mood, content, time });
-      localStorage.setItem('diaryEntries', JSON.stringify(entries));
-      document.getElementById('newTitle').value = "";
-      diaryDiv.textContent = "";
-      loadEntries();
-    }
-
-    function loadEntries() {
-      const entries = JSON.parse(localStorage.getItem('diaryEntries') || '[]');
-      const search = document.getElementById('searchBar').value.toLowerCase();
-      const filter = document.getElementById('filterMood').value;
-      entriesDiv.innerHTML = "";
-      entries.forEach((entry, i) => {
-        if ((filter === 'all' || entry.mood === filter) &&
-            (entry.title.toLowerCase().includes(search) || entry.content.toLowerCase().includes(search))) {
-          const div = document.createElement('div');
-          div.className = 'diary-entry';
-          div.innerHTML = `<strong>${entry.title}</strong><br><small>${entry.time} | Mood: ${entry.mood}</small><br>${entry.content}`;
-          entriesDiv.appendChild(div);
-        }
-      });
-    }
-
-    document.getElementById('searchBar').addEventListener('input', loadEntries);
-    document.getElementById('filterMood').addEventListener('change', loadEntries);
-  </script>
+  </footer>
 
   <script>
     const starsContainer = document.getElementById('stars');
@@ -242,6 +168,22 @@
       star.style.animationDelay = `${Math.random() * 2}s`;
       starsContainer.appendChild(star);
     }
+
+    // Fade in body
+    window.addEventListener('load', () => {
+      document.body.classList.add('fade-in');
+
+      const diary = document.getElementById('diary');
+      const savedEntry = localStorage.getItem('diaryEntry');
+      if (savedEntry && diary) {
+        diary.textContent = savedEntry;
+      }
+      if (diary) {
+        diary.addEventListener('input', () => {
+          localStorage.setItem('diaryEntry', diary.textContent);
+        });
+      }
+    });
   </script>
 </body>
 </html>
