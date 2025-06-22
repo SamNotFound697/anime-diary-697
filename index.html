@@ -85,63 +85,76 @@
       margin-top: 2rem;
     }
 
-    .note-entry {
+    .diary-entry {
       background: #111927;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
+      box-shadow: 0 0 15px rgba(255, 192, 203, 0.1);
       padding: 1rem;
       margin: 1rem 0;
       position: relative;
-      box-shadow: 0 0 10px rgba(255,255,255,0.05);
     }
 
-    .note-entry button {
-      margin-left: 0.5rem;
+    .diary-entry[contenteditable="true"]:focus {
+      box-shadow: 0 0 25px rgba(255, 192, 203, 0.3);
+      outline: none;
+    }
+
+    .diary-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .diary-buttons button {
       background-color: #ff66c4;
-      color: white;
       border: none;
+      color: white;
+      padding: 0.4rem 0.7rem;
       border-radius: 8px;
-      padding: 0.4rem 0.8rem;
       cursor: pointer;
-      transition: transform 0.2s ease;
+      transition: all 0.2s ease;
     }
 
-    .note-entry button:hover {
-      transform: scale(1.1);
+    .diary-buttons button:hover {
       background-color: #ff85d0;
+      transform: scale(1.05);
     }
 
-    .diary-controls {
-      margin-top: 1.5rem;
-      text-align: center;
+    .diary-meta {
+      font-size: 0.8rem;
+      color: #aaa;
+      margin-bottom: 0.5rem;
     }
 
-    .diary-controls button {
-      background-color: #ff66c4;
-      border: none;
+    #new-entry {
+      margin-top: 1rem;
+      background: #1f2a40;
       color: white;
+      border-radius: 12px;
+      padding: 1rem;
+      width: 100%;
+    }
+
+    #add-entry {
+      margin-top: 1rem;
+      background: #ff66c4;
+      color: white;
+      border: none;
       padding: 0.5rem 1rem;
-      border-radius: 10px;
+      border-radius: 8px;
       cursor: pointer;
-      margin: 0.5rem;
-      transition: transform 0.2s ease;
     }
 
-    .diary-controls button:hover {
-      transform: scale(1.1);
-      background-color: #ff85d0;
+    #add-entry:hover {
+      background: #ff85d0;
+      transform: scale(1.05);
     }
 
-    #music-controls {
+    p.vault-link {
       margin-top: 1.5rem;
       text-align: center;
-    }
-
-    #music-url {
-      width: 60%;
-      padding: 0.5rem;
-      border-radius: 8px;
-      border: none;
-      font-family: 'Rubik', sans-serif;
     }
 
     footer {
@@ -162,10 +175,39 @@
     footer p:hover {
       opacity: 1;
     }
+
+    #music-controls {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    #music-url {
+      width: 60%;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: none;
+      font-family: 'Rubik', sans-serif;
+    }
+
+    #update-music {
+      background: #ff66c4;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-left: 0.5rem;
+    }
+
+    #update-music:hover {
+      background: #ff85d0;
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
   <div class="stars" id="stars"></div>
+
   <audio autoplay loop>
     <source src="bg-music.mp3" type="audio/mpeg">
   </audio>
@@ -179,20 +221,16 @@
 
     <div class="spotify">
       <iframe id="spotify-frame" style="border-radius:12px" src="https://open.spotify.com/embed/playlist/4bCJvqGobXLJhC1p5YBsxY?utm_source=generator" width="100%" height="352" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-      <p style="margin-top: 0.5rem;">
-        🔗 <a href="https://open.spotify.com/playlist/4bCJvqGobXLJhC1p5YBsxY" target="_blank" style="color: #ff9ee8;">Play full songs on Spotify</a>
-      </p>
+
       <div id="music-controls">
         <input type="text" id="music-url" placeholder="Paste new Spotify embed URL here">
         <button id="update-music">Update Music</button>
       </div>
     </div>
 
-    <div class="diary-controls">
-      <button onclick="addNote()">➕ New Page</button>
-    </div>
-
-    <div id="notes-container"></div>
+    <textarea id="new-entry" placeholder="Write something mysterious..."></textarea>
+    <button id="add-entry">➕ Add New Page</button>
+    <div id="entries"></div>
 
     <p class="vault-link">
       <a href="vault.html" style="color: #ffb6c1;">Go to my secret vault 🔐</a>
@@ -207,6 +245,7 @@
   </footer>
 
   <script>
+    // Starfield generator
     const starsContainer = document.getElementById('stars');
     for (let i = 0; i < 100; i++) {
       const star = document.createElement('div');
@@ -217,72 +256,92 @@
       starsContainer.appendChild(star);
     }
 
+    // Fade in
     window.addEventListener('load', () => {
       document.body.classList.add('fade-in');
-      loadNotes();
     });
 
-    document.getElementById("update-music").addEventListener("click", () => {
-      const url = document.getElementById("music-url").value;
-      if (url.trim()) {
-        document.getElementById("spotify-frame").src = url.trim();
-        localStorage.setItem("customSpotify", url.trim());
-      }
-    });
-
+    // Spotify embed
     const savedSpotify = localStorage.getItem("customSpotify");
     if (savedSpotify) {
       document.getElementById("spotify-frame").src = savedSpotify;
     }
+    document.getElementById("update-music").addEventListener("click", () => {
+      const url = document.getElementById("music-url").value.trim();
+      if (url) {
+        localStorage.setItem("customSpotify", url);
+        document.getElementById("spotify-frame").src = url;
+      }
+    });
 
-    function addNote() {
-      const now = new Date();
-      const timestamp = now.toLocaleString();
-      const notes = JSON.parse(localStorage.getItem("diaryNotes") || "[]");
-      notes.unshift({ content: "", locked: false, time: timestamp });
-      localStorage.setItem("diaryNotes", JSON.stringify(notes));
-      loadNotes();
-    }
+    // Diary Entries
+    const entriesDiv = document.getElementById('entries');
+    const newEntryInput = document.getElementById('new-entry');
+    const addButton = document.getElementById('add-entry');
 
-    function loadNotes() {
-      const container = document.getElementById('notes-container');
-      const notes = JSON.parse(localStorage.getItem("diaryNotes") || "[]");
-      container.innerHTML = "";
-      notes.forEach((note, index) => {
-        const div = document.createElement("div");
-        div.className = "note-entry";
-        div.innerHTML = `
-          <div contenteditable="true" oninput="saveEdit(${index}, this.innerText)" style="white-space: pre-wrap;">${note.content}</div>
-          <small>${note.time}</small><br>
-          <button onclick="toggleLock(${index})">${note.locked ? '🔒' : '🔓'}</button>
-          <button onclick="deleteNote(${index})" ${note.locked ? 'disabled' : ''}>🗑</button>
-        `;
-        container.appendChild(div);
+    let entries = JSON.parse(localStorage.getItem('diaryEntries') || '[]');
+
+    function renderEntries() {
+      entriesDiv.innerHTML = '';
+      entries.forEach((entry, index) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'diary-entry';
+
+        const meta = document.createElement('div');
+        meta.className = 'diary-meta';
+        meta.textContent = entry.time;
+
+        const content = document.createElement('div');
+        content.textContent = entry.text;
+        content.contentEditable = true;
+        content.addEventListener('input', () => {
+          entries[index].text = content.textContent;
+          localStorage.setItem('diaryEntries', JSON.stringify(entries));
+        });
+
+        const buttons = document.createElement('div');
+        buttons.className = 'diary-buttons';
+
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '🗑';
+        delBtn.onclick = () => {
+          if (confirm('Delete this note?')) {
+            entries.splice(index, 1);
+            localStorage.setItem('diaryEntries', JSON.stringify(entries));
+            renderEntries();
+          }
+        };
+
+        buttons.appendChild(delBtn);
+
+        wrapper.appendChild(meta);
+        wrapper.appendChild(content);
+        wrapper.appendChild(buttons);
+        entriesDiv.appendChild(wrapper);
       });
     }
 
-    function saveEdit(index, content) {
-      const notes = JSON.parse(localStorage.getItem("diaryNotes") || "[]");
-      notes[index].content = content;
-      localStorage.setItem("diaryNotes", JSON.stringify(notes));
-    }
+    renderEntries();
 
-    function deleteNote(index) {
-      const notes = JSON.parse(localStorage.getItem("diaryNotes") || "[]");
-      if (!notes[index].locked) {
-        notes.splice(index, 1);
-        localStorage.setItem("diaryNotes", JSON.stringify(notes));
-        loadNotes();
-      }
-    }
+    addButton.addEventListener('click', () => {
+      const text = newEntryInput.value.trim();
+      if (!text) return;
+      const time = new Date().toLocaleString();
+      entries.unshift({ text, time });
+      localStorage.setItem('diaryEntries', JSON.stringify(entries));
+      newEntryInput.value = '';
+      renderEntries();
+    });
 
-    function toggleLock(index) {
-      const notes = JSON.parse(localStorage.getItem("diaryNotes") || "[]");
-      notes[index].locked = !notes[index].locked;
-      localStorage.setItem("diaryNotes", JSON.stringify(notes));
-      loadNotes();
-    }
+    // Auto-save on typing
+    newEntryInput.addEventListener('input', () => {
+      localStorage.setItem('diaryEntry', newEntryInput.value);
+    });
+
+    // Load draft
+    const draft = localStorage.getItem('diaryEntry');
+    if (draft) newEntryInput.value = draft;
   </script>
+
 </body>
 </html>
-
