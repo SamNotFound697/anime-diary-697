@@ -98,7 +98,6 @@
   transition: all 0.6s ease;
 }
 
-    .diary-entry[contenteditable="true"]:focus {
       box-shadow: 0 0 25px rgba(255, 192, 203, 0.3);
       outline: none;
     }
@@ -179,9 +178,36 @@
       opacity: 1;
     }
 
-input[type="text"],
-input[type="datetime-local"],
-textarea {
+.glowbox {
+  background: #121b2b;
+  color: #fff;
+  border: 3px solid transparent;
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  font-family: 'Rubik', sans-serif;
+  margin: 0.5rem;
+  width: 90%;
+  position: relative;
+  z-index: 0;
+}
+
+.glowbox::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -3px; left: -3px; right: -3px; bottom: -3px;
+  background: linear-gradient(270deg, red, orange, yellow, green, cyan, blue, violet, red);
+  background-size: 400% 400%;
+  border-radius: 15px;
+  animation: rgbFlow 6s linear infinite;
+  filter: blur(3px);
+}
+
+@keyframes rgbFlow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
   background: #0f172a;
   color: #fff;
   border: 1px solid #ff66c4;
@@ -443,6 +469,26 @@ document.getElementById("set-reminder").addEventListener("click", () => {
     // Load draft
     const draft = localStorage.getItem('diaryEntry');
     if (draft) newEntryInput.value = draft;
+
+let lastTypedTime = Date.now();
+let typingSpeed = 1;
+
+function updateTypingSpeed() {
+  const now = Date.now();
+  const timeDiff = now - lastTypedTime;
+  typingSpeed = Math.max(0.5, Math.min(6, 600 / timeDiff));
+  document.querySelectorAll('.glowbox::before').forEach(el => {
+    el.style.animationDuration = `${6 / typingSpeed}s`;
+  });
+  lastTypedTime = now;
+}
+
+// Apply to all relevant elements
+document.querySelectorAll('input[type="text"], input[type="datetime-local"], textarea, [contenteditable="true"]').forEach(el => {
+  el.classList.add('glowbox');
+  el.addEventListener('input', updateTypingSpeed);
+});
+
   </script>
   
 <div id="toast" style="
