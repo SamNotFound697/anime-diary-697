@@ -203,6 +203,27 @@
   filter: blur(3px);
 }
 
+.glowbox::after {
+  content: "";
+  position: absolute;
+  top: -3px; left: -3px; right: -3px; bottom: -3px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.04);
+  animation: softPulse 3s ease-in-out infinite;
+  z-index: -2;
+}
+
+@keyframes softPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.015);
+    opacity: 1;
+  }
+}
+
 @keyframes rgbFlow {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
