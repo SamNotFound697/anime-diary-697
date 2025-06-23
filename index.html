@@ -179,33 +179,50 @@
       opacity: 1;
     }
 
-    #music-controls {
-      margin-top: 1.5rem;
-      text-align: center;
-    }
+input[type="text"],
+input[type="datetime-local"],
+textarea {
+  background: #0f172a;
+  color: #fff;
+  border: 1px solid #ff66c4;
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  font-family: 'Rubik', sans-serif;
+  width: 100%;
+  box-shadow: 0 0 10px rgba(255, 102, 196, 0.2);
+  transition: all 0.3s ease;
+}
 
-    #music-url {
-      width: 60%;
-      padding: 0.5rem;
-      border-radius: 8px;
-      border: none;
-      font-family: 'Rubik', sans-serif;
-    }
+input[type="text"]:focus,
+input[type="datetime-local"]:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 25px rgba(255, 102, 196, 0.6);
+  border-color: #ff85d0;
+}
 
-    #update-music {
-      background: #ff66c4;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-left: 0.5rem;
-    }
+#music-url {
+  width: 60%;
+}
 
-    #update-music:hover {
-      background: #ff85d0;
-      transform: scale(1.05);
-    }
+#set-reminder {
+  background: #ff66c4;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Rubik', sans-serif;
+  box-shadow: 0 0 10px rgba(255, 102, 196, 0.4);
+}
+
+#set-reminder:hover {
+  background: #ff85d0;
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(255, 102, 196, 0.7);
+}
+
   </style>
 </head>
 <body>
